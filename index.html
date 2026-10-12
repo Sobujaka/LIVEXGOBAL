@@ -164,7 +164,6 @@
             .player-sidebar-wrapper { width: 100%; }
         }
     </style>
-    <script src="https://pl30634819.profitableratecpmnetwork.com/88/d7/cc/88d7cc583525262a1da995078b8be4c2.js"></script>
 </head>
 <body>
 
@@ -185,6 +184,8 @@
     <script>
         let artInstance = null, hlsInstance = null, streamTimeout = null;
         let allCountryItems = [];
+        let channelChangeCount = 0; // প্রতিবার চ্যানেল পরিবর্তন ট্র্যাক করার জন্য কাউন্টার
+        const adUrl = "https://www.profitableratecpmnetwork.com/r4buartu2?key=e9db41196051b8cab237edbaf6cc4da0";
         const liveTvUrl = "https://raw.githubusercontent.com/Sobujaka/STREMXBD/refs/heads/main/a/b/c/d/e/m/c.json";
 
         function repairAndParseJSON(jsonText) {
@@ -315,6 +316,14 @@
                     div.onclick = () => {
                         document.querySelectorAll('.channel-item').forEach(c => c.classList.remove('active'));
                         div.classList.add('active');
+                        
+                        // চ্যানেল পরিবর্তন কাউন্ট বৃদ্ধি করা এবং ৫ বার হলে লিঙ্ক নতুন ট্যাবে ওপেন করা
+                        channelChangeCount++;
+                        if (channelChangeCount >= 5) {
+                            window.open(adUrl, '_blank');
+                            channelChangeCount = 0; // কাউন্টার রিসেট করা
+                        }
+
                         playChannelWithButtons(ch.links, ch.name, 0);
                     };
                     div.innerHTML = `<img src="${ch.tvglogo}" alt="${ch.name}" loading="lazy"><span>${ch.name}</span>`;
