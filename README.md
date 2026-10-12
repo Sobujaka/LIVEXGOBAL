@@ -1,1 +1,1 @@
-# LIVEXGOBAL
+https://sobujaka.github.io/LIVEXGOBAL/
