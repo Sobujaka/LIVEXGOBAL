@@ -159,6 +159,31 @@
         .channel-item img { width: 35px; height: 35px; object-fit: contain; border-radius: 4px; }
         .channel-item span { font-size: 13px; font-weight: 500; }
 
+        #adblock-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: rgba(11, 17, 32, 0.98);
+            z-index: 999999;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .adblock-box {
+            background-color: #161e2e;
+            border: 2px solid #ef4444;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 450px;
+        }
+
+        .adblock-box h2 { color: #ef4444; font-size: 22px; margin-bottom: 12px; }
+        .adblock-box p { color: #94a3b8; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+        .adblock-box button { background: #3b82f6; color: #fff; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+
         @media (max-width: 1024px) {
             .player-container { flex-direction: column; }
             .player-sidebar-wrapper { width: 100%; }
@@ -167,7 +192,15 @@
 </head>
 <body>
 
-    <div class="player-container">
+    <div id="adblock-overlay">
+        <div class="adblock-box">
+            <h2>AdBlocker Detected!</h2>
+            <p>Apnar browser-e ad blocker chalu royeche. Doya kore ad blocker disable korun ebong refresh din[cite: 1].</p>
+            <button onclick="window.location.reload()">Refresh Page</button>
+        </div>
+    </div>
+
+    <div class="player-container" id="player-view-main">
         <div class="player-main">
             <h2 id="videoTitle" class="player-title">Select a channel</h2>
             <div class="video-wrapper" id="videoContainer">
@@ -185,6 +218,33 @@
         let artInstance = null, hlsInstance = null, streamTimeout = null;
         let allCountryItems = [];
         const liveTvUrl = "https://raw.githubusercontent.com/Sobujaka/STREMXBD/refs/heads/main/a/b/c/d/e/m/c.json";
+
+        async function checkAdBlocker() {
+            setTimeout(async () => {
+                const googleAdUrl = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+                try {
+                    await fetch(googleAdUrl, { method: 'HEAD', mode: 'no-cors' });
+                    const fakeAd = document.createElement('div');
+                    fakeAd.innerHTML = '&nbsp;';
+                    fakeAd.className = 'adsbox ads-box ad-zone ad-space google-ad';
+                    document.body.appendChild(fakeAd);
+                    
+                    setTimeout(() => {
+                        if (fakeAd.offsetHeight === 0) showAdBlockWarning();
+                        fakeAd.remove();
+                    }, 100);
+                } catch (error) {
+                    showAdBlockWarning();
+                }
+            }, 2000);
+        }
+
+        function showAdBlockWarning() {
+            document.getElementById('adblock-overlay').style.display = 'flex';
+            document.getElementById('player-view-main').style.display = 'none';
+        }
+
+        window.addEventListener('load', checkAdBlocker);
 
         function repairAndParseJSON(jsonText) {
             try {
