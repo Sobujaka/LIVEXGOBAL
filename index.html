@@ -3,79 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live TV Player</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>Universal Smart Video Player - ArtPlayer & Categorizer</title>
+    <!-- ArtPlayer & HLS Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b1120; color: #ffffff; padding: 20px; }
+        
+        .tester-container {
+            background-color: #161e2e;
+            border: 1px solid #1f2937;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto 25px auto;
         }
 
-        body {
+        .tester-container h2 { font-size: 18px; margin-bottom: 10px; color: #3b82f6; }
+        
+        .file-upload-wrapper {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .file-upload-btn {
+            background-color: #1f2937;
+            border: 1px dashed #3b82f6;
+            color: #38bdf8;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card {
+            background-color: #161e2e;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #1f2937;
+            transition: transform 0.2s, border-color 0.2s;
+            position: relative;
+        }
+
+        .card:hover { transform: translateY(-5px); border-color: #3b82f6; }
+        .card-image-wrapper { width: 100%; aspect-ratio: 2 / 3; background-color: #0f172a; cursor: pointer; }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card-info { padding: 10px; }
+        .card-title { font-size: 13px; font-weight: 600; color: #f8fafc; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 36px; margin-bottom: 8px; cursor: pointer;}
+
+        .color-options {
+            display: flex;
+            justify-content: space-between;
+            background: #0f172a;
+            padding: 6px;
+            border-radius: 6px;
+        }
+
+        .color-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .color-checkbox.red { color: #ef4444; }
+        .color-checkbox.green { color: #22c55e; }
+        .color-checkbox.blue { color: #3b82f6; }
+
+        .download-bar {
+            max-width: 1000px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .dl-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .dl-red { background: #dc2626; }
+        .dl-green { background: #16a34a; }
+        .dl-blue { background: #2563eb; }
+        .dl-black { background: #374151; }
+
+        #player-view {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: #0b1120;
-            color: #ffffff;
-            padding: 15px;
+            z-index: 9999;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         .player-container {
             display: flex;
             gap: 20px;
-            width: 100%;
-            max-width: 1800px;
+            max-width: 1400px;
             margin: 0 auto;
             background: #0f172a;
-            padding: 15px;
+            padding: 20px;
             border-radius: 12px;
             border: 1px solid #1f2937;
         }
 
-        .player-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            min-width: 0;
-        }
-
-        .player-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #3b82f6;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .server-buttons {
-            display: inline-flex;
-            gap: 8px;
-            vertical-align: middle;
-        }
-
-        .server-btn {
-            background: #1e293b;
-            color: #94a3b8;
-            border: 1px solid #334155;
-            padding: 4px 10px;
-            font-size: 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .server-btn:hover, .server-btn.active {
-            background: #3b82f6;
-            color: #fff;
-            border-color: #3b82f6;
-        }
+        .player-main { flex: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+        .player-title { font-size: 18px; font-weight: 600; color: #3b82f6; }
 
         .video-wrapper {
             width: 100%;
@@ -84,82 +139,17 @@
             border-radius: 8px;
             overflow: hidden;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
-        .video-wrapper iframe, .artplayer-app {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        .player-sidebar-wrapper { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
+        .back-btn { background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .episodes-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; max-height: 450px; overflow-y: auto; }
+        .ep-btn { background: #161e2e; border: 1px solid #1f2937; color: #fff; padding: 10px; font-size: 12px; border-radius: 4px; cursor: pointer; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ep-btn.active, .ep-btn:hover { background: #3b82f6; border-color: #3b82f6; }
 
-        .player-sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        #iframePlayer { width: 100%; height: 100%; border: none; }
 
-        .player-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #161e2e;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #1f2937;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .filter-group { display: flex; flex-direction: column; gap: 5px; }
-        .filter-group label { font-size: 12px; color: #94a3b8; font-weight: 600; }
-        .filter-group select, .filter-group input {
-            background: #0f172a;
-            color: #fff;
-            border: 1px solid #1f2937;
-            padding: 8px 10px;
-            border-radius: 5px;
-            outline: none;
-            font-size: 13px;
-        }
-
-        .filter-group input::placeholder {
-            color: #64748b;
-        }
-
-        .filter-group select:focus, .filter-group input:focus {
-            border-color: #3b82f6;
-        }
-
-        .channel-list { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px; 
-            margin-top: 5px;
-        }
-
-        .channel-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #0f172a;
-            padding: 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            border: 1px solid #1f2937;
-            transition: all 0.2s;
-        }
-
-        .channel-item:hover, .channel-item.active { border-color: #3b82f6; background: #1e293b; }
-        .channel-item img { width: 35px; height: 35px; object-fit: contain; border-radius: 4px; }
-        .channel-item span { font-size: 13px; font-weight: 500; }
-
-        @media (max-width: 1024px) {
+        @media (max-width: 800px) {
             .player-container { flex-direction: column; }
             .player-sidebar-wrapper { width: 100%; }
         }
@@ -167,308 +157,309 @@
 </head>
 <body>
 
-    <div class="player-container">
-        <div class="player-main">
-            <h2 id="videoTitle" class="player-title">Select a channel</h2>
-            <div class="video-wrapper" id="videoContainer">
-                <iframe id="iframePlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="display:none;"></iframe>
-                <div id="artPlayerContainer" class="artplayer-app" style="display:none;"></div>
+    <div id="home-view">
+        <div class="tester-container">
+            <h2>JSON File Loader</h2>
+            <div class="file-upload-wrapper">
+                <input type="file" id="jsonFileInput" accept=".json,.txt" class="file-upload-btn">
+                <span id="loadStatus" style="font-size:13px; color:#94a3b8;"></span>
             </div>
         </div>
 
-        <div class="player-sidebar-wrapper">
-            <div id="playerSidebar" class="player-sidebar"></div>
+        <div class="download-bar">
+            <button class="dl-btn dl-red" onclick="downloadCategory('red')">Download red.json</button>
+            <button class="dl-btn dl-green" onclick="downloadCategory('green')">Download green.json</button>
+            <button class="dl-btn dl-blue" onclick="downloadCategory('blue')">Download blow.json</button>
+            <button class="dl-btn dl-black" onclick="downloadCategory('black')">Download black.json</button>
+        </div>
+
+        <div id="main-content"></div>
+    </div>
+
+    <!-- Player View -->
+    <div id="player-view">
+        <div class="player-container">
+            <div class="player-main">
+                <h2 id="videoTitle" class="player-title">Streaming Video</h2>
+                <div class="video-wrapper">
+                    <div id="artplayer" style="width: 100%; height: 100%; display: none;"></div>
+                    <iframe id="iframePlayer" src="" allowfullscreen style="display:none;"></iframe>
+                </div>
+            </div>
+
+            <div class="player-sidebar-wrapper">
+                <button class="back-btn" onclick="closePlayerPage()">← Back to Home</button>
+                <div id="playerSidebar"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        let artInstance = null, hlsInstance = null, streamTimeout = null;
-        let allCountryItems = [];
-        let channelChangeCount = 0; // প্রতিবার চ্যানেল পরিবর্তন ট্র্যাক করার জন্য কাউন্টার
-        const adUrl = "https://www.profitableratecpmnetwork.com/r4buartu2?key=e9db41196051b8cab237edbaf6cc4da0";
-        const liveTvUrl = "https://raw.githubusercontent.com/Sobujaka/STREMXBD/refs/heads/main/a/b/c/d/e/m/c.json";
+        let art = null;
+        let loadedItems = [];
+        let lastScrollPosition = 0;
 
-        function repairAndParseJSON(jsonText) {
-            try {
-                return JSON.parse(jsonText);
-            } catch (e) {
+        document.getElementById('jsonFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.getElementById('loadStatus').innerText = "Loading file...";
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
                 try {
-                    let cleaned = jsonText.replace(/"\s*\n*\r*\s*"/g, '","')
-                                         .replace(/([0-9]|"|true|false|null)\s*\n*\r*\s*"([^"]+)":/g, '$1,"$2":')
-                                         .replace(/,\s*([\]}])/g, '$1');
-                    return JSON.parse(cleaned);
-                } catch (repairError) {
-                    return new Function("return " + jsonText)();
+                    let parsedData = JSON.parse(event.target.result);
+                    processProgressively(parsedData);
+                } catch (err) {
+                    alert("JSON formatting error!");
+                    document.getElementById('loadStatus').innerText = "";
                 }
-            }
-        }
-
-        async function loadLiveTV() {
-            try {
-                const res = await fetch(liveTvUrl);
-                const textData = await res.text();
-                const data = repairAndParseJSON(textData);
-                
-                if (data && Array.isArray(data)) {
-                    allCountryItems = data;
-                    setupLiveTVPlayer();
-                }
-            } catch (err) {
-                console.error("Failed to load Live TV data", err);
-            }
-        }
-
-        function setupLiveTVPlayer() {
-            const sidebar = document.getElementById('playerSidebar');
-            
-            let countryOptions = '<option value="all">Country: All</option>';
-            const countriesSet = new Set();
-
-            allCountryItems.forEach(item => {
-                if (item.country) {
-                    countriesSet.add(item.country.trim());
-                }
-            });
-
-            Array.from(countriesSet).sort().forEach(countryName => {
-                countryOptions += `<option value="${countryName}">${countryName}</option>`;
-            });
-
-            sidebar.innerHTML = `
-                <div class="filter-group">
-                    <label>Country</label>
-                    <select id="countrySelect" onchange="onCountryChange()">${countryOptions}</select>
-                </div>
-                <div class="filter-group">
-                    <label>Group / Category</label>
-                    <select id="groupSelect" onchange="filterChannels()"><option value="all">Group: All</option></select>
-                </div>
-                <div class="filter-group">
-                    <label>Search Channel</label>
-                    <input type="text" id="channelSearchInput" placeholder="Search channel..." oninput="filterChannels()">
-                </div>
-                <div id="channelList" class="channel-list"></div>
-            `;
-
-            onCountryChange();
-        }
-
-        function onCountryChange() {
-            const selectedCountry = document.getElementById('countrySelect').value;
-            const groupSelect = document.getElementById('groupSelect');
-            const groupsSet = new Set();
-            
-            window.currentChannels = {};
-
-            allCountryItems.forEach(item => {
-                if (selectedCountry === 'all' || item.country === selectedCountry) {
-                    if (item.CN) {
-                        Object.values(item.CN).forEach(ch => {
-                            if (ch.group) groupsSet.add(ch.group.trim());
-                            
-                            const chNameKey = ch.name.trim().toLowerCase();
-
-                            if (!window.currentChannels[chNameKey]) {
-                                window.currentChannels[chNameKey] = {
-                                    name: ch.name,
-                                    tvglogo: ch.tvglogo,
-                                    group: ch.group ? ch.group.trim() : 'Other',
-                                    country: item.country || '',
-                                    links: [ch.url]
-                                };
-                            } else {
-                                if (!window.currentChannels[chNameKey].links.includes(ch.url)) {
-                                    window.currentChannels[chNameKey].links.push(ch.url);
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-
-            let groupOptions = '<option value="all">Group: All</option>';
-            Array.from(groupsSet).sort().forEach(g => {
-                groupOptions += `<option value="${g}">${g}</option>`;
-            });
-            groupSelect.innerHTML = groupOptions;
-
-            filterChannels();
-        }
-
-        function filterChannels() {
-            const selectedGroup = document.getElementById('groupSelect').value;
-            const searchQuery = document.getElementById('channelSearchInput').value.toLowerCase().trim();
-            renderChannels(selectedGroup, searchQuery);
-        }
-
-        function renderChannels(group, search) {
-            const container = document.getElementById('channelList');
-            container.innerHTML = '';
-            let isFirst = true;
-
-            Object.values(window.currentChannels).forEach(ch => {
-                const matchesGroup = (group === 'all' || ch.group === group);
-                const matchesSearch = (!search || ch.name.toLowerCase().includes(search));
-
-                if (matchesGroup && matchesSearch) {
-                    const div = document.createElement('div');
-                    div.className = 'channel-item';
-                    div.onclick = () => {
-                        document.querySelectorAll('.channel-item').forEach(c => c.classList.remove('active'));
-                        div.classList.add('active');
-                        
-                        // চ্যানেল পরিবর্তন কাউন্ট বৃদ্ধি করা এবং ৫ বার হলে লিঙ্ক নতুন ট্যাবে ওপেন করা
-                        channelChangeCount++;
-                        if (channelChangeCount >= 5) {
-                            window.open(adUrl, '_blank');
-                            channelChangeCount = 0; // কাউন্টার রিসেট করা
-                        }
-
-                        playChannelWithButtons(ch.links, ch.name, 0);
-                    };
-                    div.innerHTML = `<img src="${ch.tvglogo}" alt="${ch.name}" loading="lazy"><span>${ch.name}</span>`;
-                    container.appendChild(div);
-                    
-                    if (isFirst) { 
-                        div.click(); 
-                        isFirst = false; 
-                    }
-                }
-            });
-
-            if (isFirst) {
-                container.innerHTML = `<div style="color: #94a3b8; font-size: 13px; text-align: center; padding: 20px 0;">No channels found</div>`;
-            }
-        }
-
-        function playChannelWithButtons(urls, title, activeIndex = 0) {
-            if (!urls || urls.length === 0) return;
-
-            const titleContainer = document.getElementById('videoTitle');
-            
-            let buttonsHTML = '';
-            if (urls.length > 1) {
-                buttonsHTML = '<div class="server-buttons">';
-                urls.forEach((_, idx) => {
-                    const activeClass = idx === activeIndex ? 'active' : '';
-                    buttonsHTML += `<button class="server-btn ${activeClass}" onclick="switchServer(${idx})">Server ${idx + 1}</button>`;
-                });
-                buttonsHTML += '</div>';
-            }
-
-            titleContainer.innerHTML = `<span>${title}</span> ${buttonsHTML}`;
-
-            window.switchServer = (index) => {
-                playChannelWithButtons(urls, title, index);
             };
+            reader.readAsText(file);
+        });
 
-            loadVideo(urls[activeIndex], `${title} (Server ${activeIndex + 1})`, () => {
-                console.log(`Server ${activeIndex + 1} failed.`);
+        function processProgressively(data) {
+            const items = Array.isArray(data) ? data : [data];
+            loadedItems = [];
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = '';
+            
+            const grid = document.createElement('div');
+            grid.className = 'media-grid';
+            mainContent.appendChild(grid);
+
+            let index = 0;
+            const chunkSize = 20;
+
+            function renderBatch() {
+                const limit = Math.min(index + chunkSize, items.length);
+                for (; index < limit; index++) {
+                    let item = parseMediaItem(items[index], index);
+                    if (item) {
+                        loadedItems.push(item);
+                        renderCard(item, grid);
+                    }
+                }
+
+                document.getElementById('loadStatus').innerText = `Loaded ${loadedItems.length} items...`;
+
+                if (index < items.length) {
+                    setTimeout(renderBatch, 10);
+                } else {
+                    document.getElementById('loadStatus').innerText = `Completed! ${loadedItems.length} items loaded.`;
+                }
+            }
+
+            renderBatch();
+        }
+
+        function parseMediaItem(element, idx) {
+            let type = "movie";
+            let name = element.title || element.name || `Item ${idx + 1}`;
+            let image = element.image || "";
+            let category = element.category || "";
+            let country = element.country || "";
+            let language = element.language || "";
+            let episodes = {};
+
+            if (element.type === "tv-channel" || element.CN) {
+                type = "tv-channel";
+                let channelData = element.CN ? Object.values(element.CN)[0] : {};
+                name = channelData.name || name;
+                image = element.image || channelData.tvglogo || "";
+                episodes["Live Stream"] = channelData.url || "";
+            } else if (element.episodes) {
+                type = "series";
+                episodes = element.episodes;
+            } else {
+                let videoUrl = element["Movie link"] || element.link || element.url || element.file;
+                if (videoUrl) episodes["Play Movie"] = videoUrl;
+            }
+
+            if (Object.keys(episodes).length === 0) return null;
+
+            return {
+                id: idx,
+                type,
+                name,
+                image,
+                category,
+                country,
+                language,
+                episodes,
+                rawElement: element,
+                tags: { red: false, green: false, blue: false }
+            };
+        }
+
+        function renderCard(item, grid) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.id = `card-${item.id}`;
+            card.innerHTML = `
+                <div class="card-image-wrapper">
+                    <img src="${item.image}" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+                </div>
+                <div class="card-info">
+                    <div class="card-title">${item.name}</div>
+                    <div class="color-options">
+                        <label class="color-checkbox red">
+                            <input type="checkbox" onchange="toggleTag(${item.id}, 'red', this.checked)"> Red
+                        </label>
+                        <label class="color-checkbox green">
+                            <input type="checkbox" onchange="toggleTag(${item.id}, 'green', this.checked)"> Green
+                        </label>
+                        <label class="color-checkbox blue">
+                            <input type="checkbox" onchange="toggleTag(${item.id}, 'blue', this.checked)"> Blue
+                        </label>
+                    </div>
+                </div>
+            `;
+            
+            card.querySelector('.card-image-wrapper').onclick = () => openPlayerPage(item);
+            card.querySelector('.card-title').onclick = () => openPlayerPage(item);
+            
+            grid.appendChild(card);
+        }
+
+        function toggleTag(id, color, isChecked) {
+            const item = loadedItems.find(i => i.id === id);
+            if (item) {
+                item.tags[color] = isChecked;
+            }
+        }
+
+        function downloadCategory(categoryName) {
+            let filteredRawData = [];
+
+            if (categoryName === 'black') {
+                filteredRawData = loadedItems
+                    .filter(item => !item.tags.red && !item.tags.green && !item.tags.blue)
+                    .map(item => item.rawElement);
+            } else {
+                let targetColor = categoryName === 'blow' ? 'blue' : categoryName;
+                filteredRawData = loadedItems
+                    .filter(item => item.tags[targetColor])
+                    .map(item => item.rawElement);
+            }
+
+            if (filteredRawData.length === 0) {
+                return alert(`No items found for ${categoryName}.json!`);
+            }
+
+            let fileName = categoryName === 'blue' ? 'blow.json' : `${categoryName}.json`;
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(filteredRawData, null, 2));
+            let downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", fileName);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function openPlayerPage(item) {
+            lastScrollPosition = window.scrollY || document.documentElement.scrollTop;
+
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('player-view').style.display = 'block';
+
+            const sidebar = document.getElementById('playerSidebar');
+            sidebar.innerHTML = '<h3 style="margin-bottom:10px; font-size:14px; color:#94a3b8;">Episodes / Sources</h3><div class="episodes-grid" id="epGrid"></div>';
+            
+            const epGrid = document.getElementById('epGrid');
+            const epKeys = Object.keys(item.episodes);
+
+            epKeys.forEach((indexKey, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'ep-btn';
+                btn.innerText = indexKey;
+                btn.onclick = () => {
+                    document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    loadVideo(item.episodes[indexKey], `${item.name} (${indexKey})`);
+                };
+                epGrid.appendChild(btn);
+                if (index === 0) btn.click();
             });
         }
 
-        function destroyPlayers() {
-            if (streamTimeout) {
-                clearTimeout(streamTimeout);
-                streamTimeout = null;
-            }
-            if (hlsInstance) {
-                hlsInstance.destroy();
-                hlsInstance = null;
-            }
-            if (artInstance) {
-                artInstance.destroy();
-                artInstance = null;
-            }
-        }
-
-        function loadVideo(url, title, onErrorCallback = null) {
+        function loadVideo(url, title) {
             const iframe = document.getElementById('iframePlayer');
-            const artContainer = document.getElementById('artPlayerContainer');
-            
-            destroyPlayers();
+            const artContainer = document.getElementById('artplayer');
+            document.getElementById('videoTitle').innerText = title;
 
-            if (!url) {
-                if (onErrorCallback) onErrorCallback();
-                return;
+            if (art) {
+                art.destroy();
+                art = null;
             }
 
-            const cleanUrl = url.trim();
+            let cleanUrl = (url || '').trim();
+
+            // Google Drive Link Handling
+            if (cleanUrl.includes('drive.google.com')) {
+                const match = cleanUrl.match(/\/d\/([^\/]+)/) || cleanUrl.match(/id=([^&]+)/);
+                if (match && match[1]) {
+                    cleanUrl = `https://drive.google.com/file/d/${match[1]}/preview`;
+                }
+            }
+
             const lowerUrl = cleanUrl.toLowerCase();
 
-            iframe.style.display = 'none';
-            iframe.src = '';
-            artContainer.style.display = 'block';
+            // যদি এটি সাধারণ ওয়েব এমবেড লিংক বা ড্রাইভ প্রিভিউ হয় তবে iframe এ চালাবে
+            if (lowerUrl.includes('youtube.com') || lowerUrl.includes('youtu.be') || lowerUrl.includes('/preview') || !lowerUrl.match(/\.(mp4|m3u8|mkv|webm|mov)(\?.*)?$/i)) {
+                artContainer.style.display = 'none';
+                iframe.style.display = 'block';
+                iframe.src = cleanUrl;
+            } else {
+                // সরাসরি ভিডিও বা HLS স্ট্রিম হলে ArtPlayer ব্যবহার করবে
+                iframe.style.display = 'none';
+                iframe.src = '';
+                artContainer.style.display = 'block';
 
-            let hasTriggeredError = false;
-            const handleError = () => {
-                if (!hasTriggeredError) {
-                    hasTriggeredError = true;
-                    destroyPlayers();
-                    if (onErrorCallback) onErrorCallback();
-                }
-            };
-
-            streamTimeout = setTimeout(() => {
-                handleError();
-            }, 8000);
-
-            artInstance = new Artplayer({
-                container: '#artPlayerContainer',
-                url: cleanUrl,
-                type: lowerUrl.includes('.m3u8') ? 'm3u8' : 'auto',
-                customType: {
-                    m3u8: function (video, videoUrl) {
-                        if (Hls.isSupported()) {
-                            hlsInstance = new Hls({
-                                enableWorker: true,
-                                lowLatencyMode: false,
-                                maxBufferLength: 60,
-                            });
-                            hlsInstance.loadSource(videoUrl);
-                            hlsInstance.attachMedia(video);
-                            
-                            hlsInstance.on(Hls.Events.MANIFEST_PARSED, function () {
-                                if (streamTimeout) {
-                                    clearTimeout(streamTimeout);
-                                    streamTimeout = null;
-                                }
-                            });
-
-                            hlsInstance.on(Hls.Events.ERROR, function (event, data) {
-                                if (data.fatal) handleError();
-                            });
-                        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                            video.src = videoUrl;
-                            video.addEventListener('loadedmetadata', () => {
-                                if (streamTimeout) {
-                                    clearTimeout(streamTimeout);
-                                    streamTimeout = null;
-                                }
-                            });
-                            video.addEventListener('error', handleError);
-                        }
+                art = new Artplayer({
+                    container: '#artplayer',
+                    url: cleanUrl,
+                    type: lowerUrl.includes('.m3u8') ? 'm3u8' : 'auto',
+                    customType: {
+                        m3u8: function (video, url, art) {
+                            if (Hls.isSupported()) {
+                                const hls = new Hls();
+                                hls.loadSource(url);
+                                hls.attachMedia(video);
+                                hls.on(Hls.Events.ERROR, function (event, data) {
+                                    if (data.fatal) {
+                                        console.error('HLS error:', data);
+                                        art.notice.show = 'Stream load failed or CORS restricted!';
+                                    }
+                                });
+                            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                                video.src = url;
+                            } else {
+                                art.notice.show = 'HLS not supported in this browser!';
+                            }
+                        },
                     },
-                },
-                autoplay: true,
-                pip: true,
-                screenshot: true,
-                fullscreen: true,
-                fullscreenWeb: true,
-                theme: '#3b82f6',
-            });
-
-            artInstance.on('video:playing', () => {
-                if (streamTimeout) {
-                    clearTimeout(streamTimeout);
-                    streamTimeout = null;
-                }
-            });
-
-            artInstance.on('error', handleError);
+                    autoplay: true,
+                    setting: true,
+                    fullscreen: true,
+                    fullscreenWeb: true,
+                    pip: true,
+                });
+            }
         }
 
-        loadLiveTV();
+        function closePlayerPage() {
+            document.getElementById('player-view').style.display = 'none';
+            document.getElementById('home-view').style.display = 'block';
+            
+            window.scrollTo(0, lastScrollPosition);
+
+            document.getElementById('iframePlayer').src = '';
+            if (art) {
+                art.destroy();
+                art = null;
+            }
+        }
     </script>
 </body>
 </html>
