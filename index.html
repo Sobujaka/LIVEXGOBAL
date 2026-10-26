@@ -18,56 +18,31 @@
             padding: 20px;
             max-width: 1000px;
             margin: 0 auto 20px auto;
+            text-align: center;
         }
 
-        .tester-container h2 { font-size: 18px; margin-bottom: 10px; color: #3b82f6; }
-        .tester-container textarea {
-            width: 100%;
-            height: 140px;
-            background-color: #0f172a;
-            border: 1px solid #1f2937;
-            border-radius: 6px;
-            color: #38bdf8;
-            font-family: monospace;
-            padding: 12px;
-            font-size: 13px;
-            outline: none;
-            resize: vertical;
-        }
+        .tester-container h2 { font-size: 18px; margin-bottom: 15px; color: #3b82f6; }
 
         .input-controls {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: center;
+            gap: 15px;
             align-items: center;
         }
 
         .file-upload-btn {
             background-color: #059669;
             color: white;
-            padding: 10px 16px;
+            padding: 12px 24px;
             border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .file-upload-btn input { display: none; }
-
-        .tester-container button.load-btn {
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-weight: bold;
             cursor: pointer;
             font-size: 15px;
-            flex: 1;
+            font-weight: bold;
+            display: inline-block;
             transition: background 0.2s;
         }
-
-        .tester-container button.load-btn:hover { background-color: #2563eb; }
+        .file-upload-btn:hover { background-color: #047857; }
+        .file-upload-btn input { display: none; }
 
         .download-bar {
             max-width: 1000px;
@@ -116,7 +91,6 @@
 
         .card:hover { transform: translateY(-5px); border-color: #3b82f6; }
         
-        /* Delete Button Styling */
         .card-delete-btn {
             position: absolute;
             top: 6px;
@@ -202,89 +176,10 @@
 
         .video-wrapper iframe, #artplayer-container { width: 100%; height: 100%; border: none; }
 
-        .active-code-box {
-            margin-top: 15px;
-            background: #161e2e;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #1f2937;
-        }
-
-        .active-code-box h3 { font-size: 14px; color: #94a3b8; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .active-code-box textarea {
-            width: 100%;
-            height: 150px;
-            background-color: #0f172a;
-            border: 1px solid #3b82f6;
-            border-radius: 6px;
-            color: #10b981;
-            font-family: monospace;
-            padding: 10px;
-            font-size: 12px;
-            outline: none;
-            resize: vertical;
-        }
-
-        .copy-btn {
-            background: #10b981;
-            color: #fff;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .copy-btn:hover { background: #059669; }
-
         .player-sidebar-wrapper { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
         .back-btn { background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
-        .meta-box {
-            background: #161e2e;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #1f2937;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .meta-box h4 { font-size: 13px; color: #38bdf8; }
-
-        .meta-field {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .meta-field label { font-size: 11px; color: #94a3b8; }
-        .meta-field input {
-            background: #0f172a;
-            border: 1px solid #374151;
-            border-radius: 4px;
-            color: #fff;
-            padding: 8px;
-            font-size: 12px;
-            outline: none;
-        }
-        .meta-field input:focus { border-color: #3b82f6; }
-
-        .save-meta-btn {
-            background: #3b82f6;
-            color: #fff;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .save-meta-btn:hover { background: #2563eb; }
-
-        .episodes-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; max-height: 300px; overflow-y: auto; }
+        .episodes-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; max-height: 400px; overflow-y: auto; }
         .ep-btn { background: #161e2e; border: 1px solid #1f2937; color: #fff; padding: 10px; font-size: 12px; border-radius: 4px; cursor: pointer; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .ep-btn.active, .ep-btn:hover { background: #3b82f6; border-color: #3b82f6; }
 
@@ -298,17 +193,14 @@
 
     <div id="home-view">
         <div class="tester-container">
-            <h2>Universal JSON Code Tester</h2>
-            <textarea id="jsonInput" placeholder="এখানে আপনার JSON পেস্ট করুন অথবা ফাইল আপলোড করুন..."></textarea>
-            
+            <h2>Universal JSON File Loader & Categorizer</h2>
             <div class="input-controls">
                 <label class="file-upload-btn">
-                    📁 Upload File
+                    📁 Upload JSON File
                     <input type="file" id="fileInput" accept=".json,.txt" onchange="handleFileUpload(event)">
                 </label>
-                <button class="load-btn" onclick="processTestCode()">Load Content</button>
             </div>
-            <div id="loadStatus" style="font-size:12px; color:#38bdf8; margin-top:8px;"></div>
+            <div id="loadStatus" style="font-size:12px; color:#38bdf8; margin-top:10px;"></div>
         </div>
 
         <div class="download-bar">
@@ -330,32 +222,10 @@
                     <iframe id="iframePlayer" src="" allowfullscreen style="display:none;" referrerpolicy="no-origin"></iframe>
                     <div id="artplayer-container" style="display:none;"></div>
                 </div>
-
-                <div class="active-code-box">
-                    <h3>
-                        <span>Edit & Copy JSON Code:</span>
-                        <button class="copy-btn" onclick="copyCurrentCode()">Copy Edited Code</button>
-                    </h3>
-                    <textarea id="currentCodeBox" placeholder="এখানে কোড প্রদর্শিত হবে..."></textarea>
-                </div>
             </div>
 
             <div class="player-sidebar-wrapper">
                 <button class="back-btn" onclick="closePlayerPage()">← Back to Home</button>
-                
-                <div class="meta-box">
-                    <h4>Edit Details (Press Enter to Save)</h4>
-                    <div class="meta-field">
-                        <label>Country:</label>
-                        <input type="text" id="inputCountry" placeholder="e.g. Japan, USA" onkeypress="handleMetaEnter(event)">
-                    </div>
-                    <div class="meta-field">
-                        <label>Language:</label>
-                        <input type="text" id="inputLanguage" placeholder="e.g. Japanese, Bangla" onkeypress="handleMetaEnter(event)">
-                    </div>
-                    <button class="save-meta-btn" onclick="saveMetaData()">Save & Update JSON</button>
-                </div>
-
                 <div id="playerSidebar"></div>
             </div>
         </div>
@@ -367,6 +237,7 @@
         let currentItem = null;
         let currentSelectedEpKey = '';
         let loadedItems = [];
+        let fileContentData = '';
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
@@ -375,15 +246,15 @@
             document.getElementById('loadStatus').innerText = "Reading file...";
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('jsonInput').value = e.target.result;
+                fileContentData = e.target.result;
                 processTestCode();
             };
             reader.readAsText(file);
         }
 
         function processTestCode() {
-            let rawInput = document.getElementById('jsonInput').value.trim();
-            if (!rawInput) return alert("দয়া করে টেক্সট বক্সে কোড পেস্ট করুন অথবা ফাইল আপলোড করুন!");
+            let rawInput = fileContentData.trim();
+            if (!rawInput) return alert("কোনো ফাইল ডেটা পাওয়া যায়নি!");
 
             let items = smartExtractMediaList(rawInput);
 
@@ -447,7 +318,7 @@
                     });
                 }
             } catch (e) {
-                alert("JSON কোডে ভুল আছে! সঠিক JSON ব্যবহার করুন।");
+                alert("JSON কোডে ভুল আছে! সঠিক JSON ফাইল ব্যবহার করুন।");
             }
 
             return results;
@@ -515,25 +386,16 @@
         }
 
         function deleteMovieItem(event, id) {
-            event.stopPropagation(); // Card open hone se rokne ke liye
-
-            // Array theke item delete kora
+            event.stopPropagation();
             loadedItems = loadedItems.filter(item => item.id !== id);
-
-            // UI theke card muche phela
             const cardElement = document.getElementById(`card-${id}`);
-            if (cardElement) {
-                cardElement.remove();
-            }
-
+            if (cardElement) cardElement.remove();
             document.getElementById('loadStatus').innerText = `Remaining items: ${loadedItems.length}`;
         }
 
         function toggleTag(id, color, isChecked) {
             const item = loadedItems.find(i => i.id === id);
-            if (item) {
-                item.tags[color] = isChecked;
-            }
+            if (item) item.tags[color] = isChecked;
         }
 
         function downloadCategory(categoryName) {
@@ -571,9 +433,6 @@
             document.getElementById('home-view').style.display = 'none';
             document.getElementById('player-view').style.display = 'block';
 
-            document.getElementById('inputCountry').value = item.country || '';
-            document.getElementById('inputLanguage').value = item.language || '';
-
             const sidebar = document.getElementById('playerSidebar');
             sidebar.innerHTML = '<h3 style="margin-top:10px; margin-bottom:10px; font-size:14px; color:#94a3b8;">Episodes / Sources</h3><div class="episodes-grid" id="epGrid"></div>';
             
@@ -589,83 +448,10 @@
                     btn.classList.add('active');
                     currentSelectedEpKey = indexKey;
                     loadVideo(item.episodes[indexKey], `${item.name} (${indexKey})`);
-                    generateCodeBox(item, indexKey);
                 };
                 epGrid.appendChild(btn);
                 if (index === 0) btn.click();
             });
-        }
-
-        function handleMetaEnter(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                saveMetaData();
-            }
-        }
-
-        function saveMetaData() {
-            if (!currentItem) return;
-            
-            currentItem.country = document.getElementById('inputCountry').value.trim();
-            currentItem.language = document.getElementById('inputLanguage').value.trim();
-            
-            if (currentItem.rawElement) {
-                currentItem.rawElement.country = currentItem.country;
-                currentItem.rawElement.language = currentItem.language;
-            }
-
-            generateCodeBox(currentItem, currentSelectedEpKey);
-            alert("Details updated!");
-        }
-
-        function generateCodeBox(item, selectedEpKey) {
-            let outputObject = {};
-
-            if (item.type === "movie") {
-                outputObject = {
-                    "title": item.name,
-                    "image": item.image,
-                    "category": item.category,
-                    "country": item.country,
-                    "language": item.language,
-                    "Movie link": item.episodes[selectedEpKey] || ""
-                };
-            } else if (item.type === "series") {
-                outputObject = {
-                    "name": item.name,
-                    "image": item.image,
-                    "category": item.category || "ANIMATION",
-                    "country": item.country,
-                    "language": item.language,
-                    "episodes": item.episodes
-                };
-            } else if (item.type === "tv-channel") {
-                outputObject = {
-                    "type": "tv-channel",
-                    "country": item.country || "Bangladesh",
-                    "language": item.language,
-                    "image": item.image,
-                    "CN": {
-                        "1": {
-                            "name": item.name,
-                            "tvglogo": item.image,
-                            "group": item.category,
-                            "url": item.episodes[selectedEpKey] || ""
-                        }
-                    }
-                };
-            }
-
-            document.getElementById('currentCodeBox').value = JSON.stringify(outputObject, null, 2);
-        }
-
-        function copyCurrentCode() {
-            const codeBox = document.getElementById('currentCodeBox');
-            if (!codeBox.value) return alert('কপি করার মতো কোনো কোড নেই!');
-            
-            codeBox.select();
-            document.execCommand('copy');
-            alert('কোড সফলভাবে কপি হয়েছে!');
         }
 
         function loadVideo(url, title) {
@@ -673,7 +459,6 @@
             const artContainer = document.getElementById('artplayer-container');
             document.getElementById('videoTitle').innerText = title;
 
-            // Fast Destroy existing instance
             if (artPlayerInstance) {
                 artPlayerInstance.destroy(false);
                 artPlayerInstance = null;
@@ -690,7 +475,6 @@
 
             const lowerUrl = cleanUrl.toLowerCase();
 
-            // Direct Media Streams (m3u8/mp4/mkv/webm) -> Artplayer fast load
             if (lowerUrl.includes('.m3u8') || lowerUrl.includes('.mp4') || lowerUrl.includes('.mkv') || lowerUrl.includes('.webm')) {
                 iframe.style.display = 'none';
                 iframe.src = '';
@@ -732,7 +516,6 @@
                     },
                 });
             } else {
-                // Non-direct URLs -> Iframe
                 artContainer.style.display = 'none';
                 iframe.style.display = 'block';
                 iframe.src = cleanUrl;
@@ -740,7 +523,6 @@
         }
 
         function closePlayerPage() {
-            // Instant hide & return home
             document.getElementById('player-view').style.display = 'none';
             document.getElementById('home-view').style.display = 'block';
             
