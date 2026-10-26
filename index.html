@@ -115,6 +115,32 @@
         }
 
         .card:hover { transform: translateY(-5px); border-color: #3b82f6; }
+        
+        /* Delete Button Styling */
+        .card-delete-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(220, 38, 38, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 13px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .card-delete-btn:hover {
+            background: #ef4444;
+            transform: scale(1.1);
+        }
+
         .card-image-wrapper { width: 100%; aspect-ratio: 2 / 3; background-color: #0f172a; cursor: pointer; }
         .card img { width: 100%; height: 100%; object-fit: cover; }
         .card-info { padding: 10px; }
@@ -437,7 +463,7 @@
             mainContent.appendChild(grid);
 
             let index = 0;
-            const chunkSize = 25; // Asty asty batch load
+            const chunkSize = 25;
 
             function renderBatch() {
                 const fragment = document.createDocumentFragment();
@@ -449,6 +475,7 @@
                     card.className = 'card';
                     card.id = `card-${item.id}`;
                     card.innerHTML = `
+                        <button class="card-delete-btn" onclick="deleteMovieItem(event, ${item.id})" title="Delete Item">🗑️</button>
                         <div class="card-image-wrapper">
                             <img src="${item.image}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
                         </div>
@@ -485,6 +512,21 @@
             }
 
             renderBatch();
+        }
+
+        function deleteMovieItem(event, id) {
+            event.stopPropagation(); // Card open hone se rokne ke liye
+
+            // Array theke item delete kora
+            loadedItems = loadedItems.filter(item => item.id !== id);
+
+            // UI theke card muche phela
+            const cardElement = document.getElementById(`card-${id}`);
+            if (cardElement) {
+                cardElement.remove();
+            }
+
+            document.getElementById('loadStatus').innerText = `Remaining items: ${loadedItems.length}`;
         }
 
         function toggleTag(id, color, isChecked) {
