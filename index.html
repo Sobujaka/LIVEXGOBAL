@@ -91,6 +91,22 @@
 
         .card:hover { transform: translateY(-5px); border-color: #3b82f6; }
         
+        /* Language Badge Code */
+        .card-lang-badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #38bdf8;
+            border: 1px solid #0284c7;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            z-index: 10;
+            text-transform: uppercase;
+        }
+
         .card-delete-btn {
             position: absolute;
             top: 6px;
@@ -282,7 +298,7 @@
                         let image = element.image || "";
                         let category = element.category || "";
                         let country = element.country || "";
-                        let language = element.language || "";
+                        let language = element.language || "N/A";
                         let episodes = {};
 
                         if (element.type === "tv-channel" || element.CN) {
@@ -346,6 +362,7 @@
                     card.className = 'card';
                     card.id = `card-${item.id}`;
                     card.innerHTML = `
+                        <div class="card-lang-badge" title="Language: ${item.language}">${item.language}</div>
                         <button class="card-delete-btn" onclick="deleteMovieItem(event, ${item.id})" title="Delete Item">🗑️</button>
                         <div class="card-image-wrapper">
                             <img src="${item.image}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
@@ -354,13 +371,13 @@
                             <div class="card-title">${item.name}</div>
                             <div class="color-options">
                                 <label class="color-checkbox red">
-                                    <input type="checkbox" ${item.tags.red ? 'checked' : ''} onchange="toggleTag(${item.id}, 'red', this.checked)"> Red
+                                    <input type="checkbox" class="chk-red" ${item.tags.red ? 'checked' : ''} onchange="toggleLanguageTag(${item.id}, 'red', this.checked)"> Red
                                 </label>
                                 <label class="color-checkbox green">
-                                    <input type="checkbox" ${item.tags.green ? 'checked' : ''} onchange="toggleTag(${item.id}, 'green', this.checked)"> Green
+                                    <input type="checkbox" class="chk-green" ${item.tags.green ? 'checked' : ''} onchange="toggleLanguageTag(${item.id}, 'green', this.checked)"> Green
                                 </label>
                                 <label class="color-checkbox blue">
-                                    <input type="checkbox" ${item.tags.blue ? 'checked' : ''} onchange="toggleTag(${item.id}, 'blue', this.checked)"> Blue
+                                    <input type="checkbox" class="chk-blue" ${item.tags.blue ? 'checked' : ''} onchange="toggleLanguageTag(${item.id}, 'blue', this.checked)"> Blue
                                 </label>
                             </div>
                         </div>
@@ -393,29 +410,48 @@
             document.getElementById('loadStatus').innerText = `Remaining items: ${loadedItems.length}`;
         }
 
-        function toggleTag(id, color, isChecked) {
-            const item = loadedItems.find(i => i.id === id);
-            if (item) item.tags[color] = isChecked;
+        function toggleLanguageTag(id, color, isChecked) {
+            const currentItem = loadedItems.find(i => i.id === id);
+            if (!currentItem) return;
+
+            const targetLang = (currentItem.language || '').trim().toLowerCase();
+
+            // Same language shoho shob item-er state update kora hocche
+            loadedItems.forEach(item => {
+                const itemLang = (item.language || '').trim().toLowerCase();
+                if (itemLang === targetLang) {
+                    item.tags[color] = isChecked;
+
+                    // UI DOM Checkbox Update
+                    const cardElement = document.getElementById(`card-${item.id}`);
+                    if (cardElement) {
+                        const checkbox = cardElement.querySelector(`.chk-${color}`);
+                        if (checkbox) checkbox.checked = isChecked;
+                    }
+                }
+            });
         }
 
         function downloadCategory(categoryName) {
             let filteredRawData = [];
+            let itemsToRemoveIds = [];
 
             if (categoryName === 'black') {
-                filteredRawData = loadedItems
-                    .filter(item => !item.tags.red && !item.tags.green && !item.tags.blue)
-                    .map(item => item.rawElement);
+                let itemsToRemove = loadedItems.filter(item => !item.tags.red && !item.tags.green && !item.tags.blue);
+                filteredRawData = itemsToRemove.map(item => item.rawElement);
+                itemsToRemoveIds = itemsToRemove.map(item => item.id);
             } else {
                 let targetColor = categoryName === 'blow' ? 'blue' : categoryName;
-                filteredRawData = loadedItems
-                    .filter(item => item.tags[targetColor])
-                    .map(item => item.rawElement);
+                let itemsToRemove = loadedItems.filter(item => item.tags[targetColor]);
+                filteredRawData = itemsToRemove.map(item => item.rawElement);
+                itemsToRemoveIds = itemsToRemove.map(item => item.id);
             }
 
             if (filteredRawData.length === 0) {
                 return alert(`No items found for ${categoryName}.json!`);
             }
 
+            // JSON File Download Trigger
             let fileName = categoryName === 'blue' ? 'blow.json' : `${categoryName}.json`;
             let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(filteredRawData, null, 2));
             let downloadAnchor = document.createElement('a');
@@ -424,6 +460,15 @@
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
+
+            // Auto-Delete Downloaded Items from screen & state
+            itemsToRemoveIds.forEach(id => {
+                const cardElement = document.getElementById(`card-${id}`);
+                if (cardElement) cardElement.remove();
+            });
+
+            loadedItems = loadedItems.filter(item => !itemsToRemoveIds.includes(item.id));
+            document.getElementById('loadStatus').innerText = `Downloaded ${filteredRawData.length} items. Remaining items: ${loadedItems.length}`;
         }
 
         function openPlayerPage(item) {
